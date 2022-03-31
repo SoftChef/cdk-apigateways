@@ -2,20 +2,12 @@ const {
   awscdk,
   AUTOMATION_TOKEN,
 } = require('projen');
-const { NpmAccess } = require('projen/lib/javascript');
+const {
+  NpmAccess,
+} = require('projen/lib/javascript');
 
 const PROJECT_NAME = '@softchef/cdk-apigateways';
 const PROJECT_DESCRIPTION = 'This is a AWS CDK construct package. To mix multiple RestApi/HttpApi endpoints to CloudFront distribution(CDN). Also generate documentation page with your Swagger/OpenAPI definitions.';
-
-/**
- * @todo
- * 1. Write README.md
- * 2. Test lib to node_modules
- * 3. Transform index.html
- * 4. Upload yaml to S3
- * 5. Write default yaml
- * 6. Publish
- */
 
 const project = new awscdk.AwsCdkConstructLibrary({
   authorName: 'SoftChef',
