@@ -5,7 +5,7 @@ const {
 const { NpmAccess } = require('projen/lib/javascript');
 
 const PROJECT_NAME = '@softchef/cdk-apigateways';
-const PROJECT_DESCRIPTION = '';
+const PROJECT_DESCRIPTION = 'This is a AWS CDK construct package. To mix multiple RestApi/HttpApi endpoints to CloudFront distribution(CDN). Also generate documentation page with your Swagger/OpenAPI definitions.';
 
 /**
  * @todo
