@@ -2,6 +2,7 @@ const {
   awscdk,
   AUTOMATION_TOKEN,
 } = require('projen');
+const { NpmAccess } = require('projen/lib/javascript');
 
 const PROJECT_NAME = '@softchef/cdk-apigateways';
 const PROJECT_DESCRIPTION = '';
@@ -21,6 +22,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorEmail: 'poke@softchef.com',
   authorUrl: 'https://www.softchef.com',
   authorOrganization: true,
+  npmAccess: NpmAccess.PUBLIC,
   name: PROJECT_NAME,
   description: PROJECT_DESCRIPTION,
   repositoryUrl: 'https://github.com/SoftChef/cdk-apigateways.git',
