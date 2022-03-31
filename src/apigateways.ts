@@ -6,6 +6,7 @@ import {
   RestApi as SoftChefRestApi,
 } from '@softchef/cdk-restapi';
 import {
+  Duration,
   Stack,
 } from 'aws-cdk-lib';
 import {
@@ -13,10 +14,12 @@ import {
 } from 'aws-cdk-lib/aws-apigateway';
 import {
   AllowedMethods,
+  CacheCookieBehavior,
   CachedMethods,
+  CacheHeaderBehavior,
   CachePolicy,
+  CacheQueryStringBehavior,
   Distribution,
-  OriginRequestPolicy,
   ResponseHeadersPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
@@ -102,6 +105,24 @@ export class ApiGateways extends Construct {
    * @returns Distribution
    */
   private createDistribution(props: ApiGatewaysProps): Distribution {
+    const cachePolicy = new CachePolicy(this, 'DisabledCachePolicy', {
+      minTtl: Duration.seconds(1),
+      maxTtl: Duration.seconds(1),
+      defaultTtl: Duration.seconds(1),
+      headerBehavior: CacheHeaderBehavior.allowList(...[
+        'Accept-Language',
+        'Accept-Charset',
+        'Accept',
+        'Authorization',
+        'Host',
+        'Origin',
+        'Referer',
+      ]),
+      queryStringBehavior: CacheQueryStringBehavior.all(),
+      cookieBehavior: CacheCookieBehavior.all(),
+      enableAcceptEncodingGzip: true,
+      enableAcceptEncodingBrotli: true,
+    });
     const distribution = new Distribution(this, 'Distribution', {
       defaultBehavior: {
         origin: new S3Origin(this.s3Bucket, {
@@ -137,8 +158,7 @@ export class ApiGateways extends Construct {
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         allowedMethods: AllowedMethods.ALLOW_ALL,
         cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
-        cachePolicy: CachePolicy.CACHING_DISABLED,
-        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER,
+        cachePolicy: cachePolicy,
         responseHeadersPolicy: ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
       });
     }
