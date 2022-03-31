@@ -85,7 +85,7 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@softchef/cdk-apigateways.ApiGateways.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@softchef/cdk-apigateways.ApiGateways.property.distribution">distribution</a></code> | <code>aws-cdk-lib.aws_cloudfront.Distribution</code> | *No description.* |
+| <code><a href="#@softchef/cdk-apigateways.ApiGateways.property.distribution">distribution</a></code> | <code>aws-cdk-lib.aws_cloudfront.Distribution</code> | CloudFront distribution. |
 
 ---
 
@@ -108,6 +108,8 @@ public readonly distribution: Distribution;
 ```
 
 - *Type:* aws-cdk-lib.aws_cloudfront.Distribution
+
+CloudFront distribution.
 
 ---
 
@@ -367,7 +369,7 @@ const documentation: Documentation = { ... }
 | <code><a href="#@softchef/cdk-apigateways.Documentation.property.customPage">customPage</a></code> | <code><a href="#@softchef/cdk-apigateways.CustomPage">CustomPage</a></code> | Custom documentation page. |
 | <code><a href="#@softchef/cdk-apigateways.Documentation.property.docsPrefix">docsPrefix</a></code> | <code>string</code> | Specify the documentation store prefix path. |
 | <code><a href="#@softchef/cdk-apigateways.Documentation.property.file">file</a></code> | <code>string</code> | Specify the documentation definitions path. |
-| <code><a href="#@softchef/cdk-apigateways.Documentation.property.pannelType">pannelType</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#@softchef/cdk-apigateways.Documentation.property.pannelType">pannelType</a></code> | <code>string</code> | Specify pannel type, Supports:. |
 | <code><a href="#@softchef/cdk-apigateways.Documentation.property.s3Bucket">s3Bucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | Specify the documentation bucket to store static web page. |
 
 ---
@@ -417,6 +419,11 @@ public readonly pannelType: string;
 ```
 
 - *Type:* string
+- *Default:* Redoc
+
+Specify pannel type, Supports:.
+
+Redoc: https://github.com/Redocly/redoc
 
 ---
 
