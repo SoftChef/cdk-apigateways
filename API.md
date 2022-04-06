@@ -131,7 +131,7 @@ const apiGatewaysProps: ApiGatewaysProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@softchef/cdk-apigateways.ApiGatewaysProps.property.documentation">documentation</a></code> | <code><a href="#@softchef/cdk-apigateways.Documentation">Documentation</a></code> | Specify the documentation config. |
-| <code><a href="#@softchef/cdk-apigateways.ApiGatewaysProps.property.originApisConfig">originApisConfig</a></code> | <code>{[ key: string ]: <a href="#@softchef/cdk-apigateways.OriginApiConfig">OriginApiConfig</a>}</code> | Mix the APIs with specified behaviors. |
+| <code><a href="#@softchef/cdk-apigateways.ApiGatewaysProps.property.originApisConfig">originApisConfig</a></code> | <code><a href="#@softchef/cdk-apigateways.OriginApiConfig">OriginApiConfig</a>[]</code> | Mix the APIs with specified behaviors. |
 | <code><a href="#@softchef/cdk-apigateways.ApiGatewaysProps.property.stageName">stageName</a></code> | <code>string</code> | All of APIs stage name, all stage names must be the same. |
 | <code><a href="#@softchef/cdk-apigateways.ApiGatewaysProps.property.distribution">distribution</a></code> | <code><a href="#@softchef/cdk-apigateways.DistributionProps">DistributionProps</a></code> | Specify the CloudFront distribution properties. |
 
@@ -152,10 +152,10 @@ Specify the documentation config.
 ##### `originApisConfig`<sup>Required</sup> <a name="originApisConfig" id="@softchef/cdk-apigateways.ApiGatewaysProps.property.originApisConfig"></a>
 
 ```typescript
-public readonly originApisConfig: {[ key: string ]: OriginApiConfig};
+public readonly originApisConfig: OriginApiConfig[];
 ```
 
-- *Type:* {[ key: string ]: <a href="#@softchef/cdk-apigateways.OriginApiConfig">OriginApiConfig</a>}
+- *Type:* <a href="#@softchef/cdk-apigateways.OriginApiConfig">OriginApiConfig</a>[]
 
 Mix the APIs with specified behaviors.
 
@@ -249,6 +249,14 @@ const distributionProps: DistributionProps = { ... }
 | <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.enabled">enabled</a></code> | <code>boolean</code> | Enable or disable the distribution. |
 | <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.enableIpv6">enableIpv6</a></code> | <code>boolean</code> | Whether CloudFront will respond to IPv6 DNS requests with an IPv6 address. |
 | <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.enableLogging">enableLogging</a></code> | <code>boolean</code> | Enable access logging for the distribution. |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.errorResponses">errorResponses</a></code> | <code>aws-cdk-lib.aws_cloudfront.ErrorResponse[]</code> | How CloudFront should handle requests that are not successful (e.g., PageNotFound). |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.geoRestriction">geoRestriction</a></code> | <code>aws-cdk-lib.aws_cloudfront.GeoRestriction</code> | Controls the countries in which your content is distributed. |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.httpVersion">httpVersion</a></code> | <code>aws-cdk-lib.aws_cloudfront.HttpVersion</code> | Specify the maximum HTTP version that you want viewers to use to communicate with CloudFront. |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.logBucket">logBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The Amazon S3 bucket to store the access logs in. |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.logFilePrefix">logFilePrefix</a></code> | <code>string</code> | An optional string that you want CloudFront to prefix to the access log filenames for this distribution. |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.logIncludesCookies">logIncludesCookies</a></code> | <code>boolean</code> | Specifies whether you want CloudFront to include cookies in access logs. |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.minimumProtocolVersion">minimumProtocolVersion</a></code> | <code>aws-cdk-lib.aws_cloudfront.SecurityPolicyProtocol</code> | The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections. |
+| <code><a href="#@softchef/cdk-apigateways.DistributionProps.property.webAclId">webAclId</a></code> | <code>string</code> | Unique identifier that specifies the AWS WAF web ACL to associate with this CloudFront distribution. |
 
 ---
 
@@ -349,6 +357,121 @@ public readonly enableLogging: boolean;
 - *Default:* false, unless `logBucket` is specified.
 
 Enable access logging for the distribution.
+
+---
+
+##### `errorResponses`<sup>Optional</sup> <a name="errorResponses" id="@softchef/cdk-apigateways.DistributionProps.property.errorResponses"></a>
+
+```typescript
+public readonly errorResponses: ErrorResponse[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.ErrorResponse[]
+- *Default:* No custom error responses.
+
+How CloudFront should handle requests that are not successful (e.g., PageNotFound).
+
+---
+
+##### `geoRestriction`<sup>Optional</sup> <a name="geoRestriction" id="@softchef/cdk-apigateways.DistributionProps.property.geoRestriction"></a>
+
+```typescript
+public readonly geoRestriction: GeoRestriction;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.GeoRestriction
+- *Default:* No geographic restrictions
+
+Controls the countries in which your content is distributed.
+
+---
+
+##### `httpVersion`<sup>Optional</sup> <a name="httpVersion" id="@softchef/cdk-apigateways.DistributionProps.property.httpVersion"></a>
+
+```typescript
+public readonly httpVersion: HttpVersion;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.HttpVersion
+- *Default:* HttpVersion.HTTP2
+
+Specify the maximum HTTP version that you want viewers to use to communicate with CloudFront.
+
+For viewers and CloudFront to use HTTP/2, viewers must support TLS 1.2 or later, and must support server name identification (SNI).
+
+---
+
+##### `logBucket`<sup>Optional</sup> <a name="logBucket" id="@softchef/cdk-apigateways.DistributionProps.property.logBucket"></a>
+
+```typescript
+public readonly logBucket: IBucket;
+```
+
+- *Type:* aws-cdk-lib.aws_s3.IBucket
+- *Default:* A bucket is created if `enableLogging` is true
+
+The Amazon S3 bucket to store the access logs in.
+
+---
+
+##### `logFilePrefix`<sup>Optional</sup> <a name="logFilePrefix" id="@softchef/cdk-apigateways.DistributionProps.property.logFilePrefix"></a>
+
+```typescript
+public readonly logFilePrefix: string;
+```
+
+- *Type:* string
+- *Default:* no prefix
+
+An optional string that you want CloudFront to prefix to the access log filenames for this distribution.
+
+---
+
+##### `logIncludesCookies`<sup>Optional</sup> <a name="logIncludesCookies" id="@softchef/cdk-apigateways.DistributionProps.property.logIncludesCookies"></a>
+
+```typescript
+public readonly logIncludesCookies: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Specifies whether you want CloudFront to include cookies in access logs.
+
+---
+
+##### `minimumProtocolVersion`<sup>Optional</sup> <a name="minimumProtocolVersion" id="@softchef/cdk-apigateways.DistributionProps.property.minimumProtocolVersion"></a>
+
+```typescript
+public readonly minimumProtocolVersion: SecurityPolicyProtocol;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.SecurityPolicyProtocol
+- *Default:* SecurityPolicyProtocol.TLS_V1_2_2021 if the '
+
+The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.
+
+CloudFront serves your objects only to browsers or devices that support at
+least the SSL version that you specify.
+
+---
+
+##### `webAclId`<sup>Optional</sup> <a name="webAclId" id="@softchef/cdk-apigateways.DistributionProps.property.webAclId"></a>
+
+```typescript
+public readonly webAclId: string;
+```
+
+- *Type:* string
+- *Default:* No AWS Web Application Firewall web access control list (web ACL).
+
+Unique identifier that specifies the AWS WAF web ACL to associate with this CloudFront distribution.
+
+To specify a web ACL created using the latest version of AWS WAF, use the ACL ARN, for example
+`arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a`.
+To specify a web ACL created using AWS WAF Classic, use the ACL ID, for example `473e64fd-f30b-4765-81a0-62ad96dd167a`.
+
+> [https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CreateDistribution.html#API_CreateDistribution_RequestParameters.](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CreateDistribution.html#API_CreateDistribution_RequestParameters.)
 
 ---
 
@@ -454,6 +577,15 @@ const originApiConfig: OriginApiConfig = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.originApi">originApi</a></code> | <code>aws-cdk-lib.aws_apigateway.RestApi \| @aws-cdk/aws-apigatewayv2-alpha.HttpApi \| @softchef/cdk-restapi.RestApi</code> | The origin api are supported AWS RestApi/HttpApi & @softchef/cdk-restapi. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.path">path</a></code> | <code>string</code> | The origin api path. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.allowedMethods">allowedMethods</a></code> | <code>aws-cdk-lib.aws_cloudfront.AllowedMethods</code> | HTTP methods to allow for this behavior. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.cachedMethods">cachedMethods</a></code> | <code>aws-cdk-lib.aws_cloudfront.CachedMethods</code> | HTTP methods to cache for this behavior. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.cachePolicy">cachePolicy</a></code> | <code>aws-cdk-lib.aws_cloudfront.ICachePolicy</code> | The cache policy for this behavior. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.compress">compress</a></code> | <code>boolean</code> | Whether you want CloudFront to automatically compress certain files for this cache behavior. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.originApiAuthorizationType">originApiAuthorizationType</a></code> | <code><a href="#@softchef/cdk-apigateways.OriginApiAuthorizationType">OriginApiAuthorizationType</a></code> | The origin api which authorization type. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.originRequestPolicy">originRequestPolicy</a></code> | <code>aws-cdk-lib.aws_cloudfront.IOriginRequestPolicy</code> | The origin request policy for this behavior. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.responseHeadersPolicy">responseHeadersPolicy</a></code> | <code>aws-cdk-lib.aws_cloudfront.IResponseHeadersPolicy</code> | The response headers policy for this behavior. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiConfig.property.viewerProtocolPolicy">viewerProtocolPolicy</a></code> | <code>aws-cdk-lib.aws_cloudfront.ViewerProtocolPolicy</code> | The protocol that viewers can use to access the files controlled by this behavior. |
 
 ---
 
@@ -469,5 +601,170 @@ The origin api are supported AWS RestApi/HttpApi & @softchef/cdk-restapi.
 
 ---
 
+##### `path`<sup>Required</sup> <a name="path" id="@softchef/cdk-apigateways.OriginApiConfig.property.path"></a>
 
+```typescript
+public readonly path: string;
+```
+
+- *Type:* string
+
+The origin api path.
+
+Ex: https://{ApiId}.execute-api.{region}.amazonaws.com/{StageName}/articles, the path is articles.
+
+---
+
+##### `allowedMethods`<sup>Optional</sup> <a name="allowedMethods" id="@softchef/cdk-apigateways.OriginApiConfig.property.allowedMethods"></a>
+
+```typescript
+public readonly allowedMethods: AllowedMethods;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.AllowedMethods
+- *Default:* AllowedMethods.ALLOW_GET_HEAD
+
+HTTP methods to allow for this behavior.
+
+---
+
+##### `cachedMethods`<sup>Optional</sup> <a name="cachedMethods" id="@softchef/cdk-apigateways.OriginApiConfig.property.cachedMethods"></a>
+
+```typescript
+public readonly cachedMethods: CachedMethods;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.CachedMethods
+- *Default:* CachedMethods.CACHE_GET_HEAD
+
+HTTP methods to cache for this behavior.
+
+---
+
+##### `cachePolicy`<sup>Optional</sup> <a name="cachePolicy" id="@softchef/cdk-apigateways.OriginApiConfig.property.cachePolicy"></a>
+
+```typescript
+public readonly cachePolicy: ICachePolicy;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.ICachePolicy
+- *Default:* CachePolicy.CACHING_OPTIMIZED
+
+The cache policy for this behavior.
+
+The cache policy determines what values are included in the cache key,
+and the time-to-live (TTL) values for the cache.
+
+> [https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html.](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html.)
+
+---
+
+##### `compress`<sup>Optional</sup> <a name="compress" id="@softchef/cdk-apigateways.OriginApiConfig.property.compress"></a>
+
+```typescript
+public readonly compress: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Whether you want CloudFront to automatically compress certain files for this cache behavior.
+
+See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html#compressed-content-cloudfront-file-types
+for file types CloudFront will compress.
+
+---
+
+##### `originApiAuthorizationType`<sup>Optional</sup> <a name="originApiAuthorizationType" id="@softchef/cdk-apigateways.OriginApiConfig.property.originApiAuthorizationType"></a>
+
+```typescript
+public readonly originApiAuthorizationType: OriginApiAuthorizationType;
+```
+
+- *Type:* <a href="#@softchef/cdk-apigateways.OriginApiAuthorizationType">OriginApiAuthorizationType</a>
+- *Default:* none
+
+The origin api which authorization type.
+
+---
+
+##### `originRequestPolicy`<sup>Optional</sup> <a name="originRequestPolicy" id="@softchef/cdk-apigateways.OriginApiConfig.property.originRequestPolicy"></a>
+
+```typescript
+public readonly originRequestPolicy: IOriginRequestPolicy;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.IOriginRequestPolicy
+- *Default:* none
+
+The origin request policy for this behavior.
+
+The origin request policy determines which values (e.g., headers, cookies)
+are included in requests that CloudFront sends to the origin.
+
+---
+
+##### `responseHeadersPolicy`<sup>Optional</sup> <a name="responseHeadersPolicy" id="@softchef/cdk-apigateways.OriginApiConfig.property.responseHeadersPolicy"></a>
+
+```typescript
+public readonly responseHeadersPolicy: IResponseHeadersPolicy;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.IResponseHeadersPolicy
+- *Default:* none
+
+The response headers policy for this behavior.
+
+The response headers policy determines which headers are included in responses
+
+---
+
+##### `viewerProtocolPolicy`<sup>Optional</sup> <a name="viewerProtocolPolicy" id="@softchef/cdk-apigateways.OriginApiConfig.property.viewerProtocolPolicy"></a>
+
+```typescript
+public readonly viewerProtocolPolicy: ViewerProtocolPolicy;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudfront.ViewerProtocolPolicy
+- *Default:* ViewerProtocolPolicy.ALLOW_ALL
+
+The protocol that viewers can use to access the files controlled by this behavior.
+
+---
+
+
+
+## Enums <a name="Enums" id="Enums"></a>
+
+### OriginApiAuthorizationType <a name="OriginApiAuthorizationType" id="@softchef/cdk-apigateways.OriginApiAuthorizationType"></a>
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiAuthorizationType.NONE">NONE</a></code> | Open access. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiAuthorizationType.IAM">IAM</a></code> | Use AWS IAM permissions. |
+| <code><a href="#@softchef/cdk-apigateways.OriginApiAuthorizationType.COGNITO">COGNITO</a></code> | Use an AWS Cognito user pool. |
+
+---
+
+##### `NONE` <a name="NONE" id="@softchef/cdk-apigateways.OriginApiAuthorizationType.NONE"></a>
+
+Open access.
+
+---
+
+
+##### `IAM` <a name="IAM" id="@softchef/cdk-apigateways.OriginApiAuthorizationType.IAM"></a>
+
+Use AWS IAM permissions.
+
+---
+
+
+##### `COGNITO` <a name="COGNITO" id="@softchef/cdk-apigateways.OriginApiAuthorizationType.COGNITO"></a>
+
+Use an AWS Cognito user pool.
+
+---
 

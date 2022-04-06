@@ -17,6 +17,9 @@ import {
 import {
   ApiGateways,
 } from './apigateways';
+import {
+  OriginApiAuthorizationType,
+} from './origin-api-authorization-type';
 
 export class IntegTesting {
 
@@ -36,14 +39,18 @@ export class IntegTesting {
     const docBucket = this.createDocBucket();
     new ApiGateways(this.stack, 'ApiGateways', {
       stageName: 'prod',
-      originApisConfig: {
-        books: {
+      originApisConfig: [
+        {
+          path: 'books',
           originApi: booksApi,
+          originApiAuthorizationType: OriginApiAuthorizationType.COGNITO,
         },
-        articles: {
+        {
+          path: 'articles',
           originApi: articlesApi,
+          originApiAuthorizationType: OriginApiAuthorizationType.IAM,
         },
-      },
+      ],
       distribution: {
         comment: 'ApiGatewayMix',
       },

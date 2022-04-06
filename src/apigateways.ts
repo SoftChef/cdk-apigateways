@@ -20,11 +20,13 @@ import {
   CachePolicy,
   CacheQueryStringBehavior,
   Distribution,
-  ResponseHeadersPolicy,
+  OriginProtocolPolicy,
+  OriginSslPolicy,
   ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import {
-  HttpOrigin, S3Origin,
+  HttpOrigin,
+  S3Origin,
 } from 'aws-cdk-lib/aws-cloudfront-origins';
 import {
   Bucket,
@@ -43,6 +45,7 @@ import {
 import {
   Documentation,
 } from './documentation';
+import { OriginApiAuthorizationType } from './origin-api-authorization-type';
 import {
   OriginApiConfig,
 } from './origin-api-config';
@@ -58,9 +61,7 @@ export interface ApiGatewaysProps {
   /**
    * Mix the APIs with specified behaviors.
    */
-  readonly originApisConfig: {
-    [pathPattern: string]: OriginApiConfig;
-  };
+  readonly originApisConfig: OriginApiConfig[];
   /**
    * Specify the CloudFront distribution properties.
    */
@@ -105,25 +106,8 @@ export class ApiGateways extends Construct {
    * @returns Distribution
    */
   private createDistribution(props: ApiGatewaysProps): Distribution {
-    const cachePolicy = new CachePolicy(this, 'DisabledCachePolicy', {
-      minTtl: Duration.seconds(1),
-      maxTtl: Duration.seconds(1),
-      defaultTtl: Duration.seconds(1),
-      headerBehavior: CacheHeaderBehavior.allowList(...[
-        'Accept-Language',
-        'Accept-Charset',
-        'Accept',
-        'Authorization',
-        'Host',
-        'Origin',
-        'Referer',
-      ]),
-      queryStringBehavior: CacheQueryStringBehavior.all(),
-      cookieBehavior: CacheCookieBehavior.all(),
-      enableAcceptEncodingGzip: true,
-      enableAcceptEncodingBrotli: true,
-    });
     const distribution = new Distribution(this, 'Distribution', {
+      ...props.distribution,
       defaultBehavior: {
         origin: new S3Origin(this.s3Bucket, {
           originPath: props.documentation.docsPrefix ?? DEFAULT_DOCUMENTATION_PREFIX_PATH,
@@ -131,16 +115,9 @@ export class ApiGateways extends Construct {
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: CachePolicy.CACHING_OPTIMIZED,
       },
-      domainNames: props.distribution?.domainNames,
-      certificate: props.distribution?.certificate,
       defaultRootObject: props.distribution?.defaultRootObject ?? 'index.html',
-      comment: props.distribution?.comment,
-      enableIpv6: props.distribution?.enableIpv6,
-      enabled: props.distribution?.enabled,
-      enableLogging: props.distribution?.enableLogging,
     });
-    for (let pathPattern in props.originApisConfig) {
-      const originApiConfig = props.originApisConfig[pathPattern];
+    for (let originApiConfig of props.originApisConfig) {
       let apiId: string;
       if (originApiConfig.originApi instanceof RestApi) {
         apiId = originApiConfig.originApi.restApiId;
@@ -152,14 +129,49 @@ export class ApiGateways extends Construct {
         apiId = 'unknown';
       }
       const executeApiDomain: string = `${apiId}.execute-api.${Stack.of(this).region}.amazonaws.com`;
-      distribution.addBehavior(`${props.stageName}/${pathPattern}*`, new HttpOrigin(executeApiDomain, {
+      const httpOrigin = new HttpOrigin(executeApiDomain, {
         originPath: '/',
-      }), {
-        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        allowedMethods: AllowedMethods.ALLOW_ALL,
-        cachedMethods: CachedMethods.CACHE_GET_HEAD_OPTIONS,
-        cachePolicy: cachePolicy,
-        responseHeadersPolicy: ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS_WITH_PREFLIGHT,
+        originSslProtocols: [OriginSslPolicy.TLS_V1_2],
+        protocolPolicy: OriginProtocolPolicy.HTTPS_ONLY,
+      });
+      let defaultCachePolicy: CachePolicy | undefined;
+      if (originApiConfig.cachePolicy === undefined) {
+        let headerBehavior: CacheCookieBehavior;
+        let queryStringBehavior: CacheQueryStringBehavior;
+        if (originApiConfig.originApiAuthorizationType === OriginApiAuthorizationType.COGNITO) {
+          headerBehavior = CacheHeaderBehavior.allowList(...[
+            'Authorization',
+          ]);
+          queryStringBehavior = CacheQueryStringBehavior.all();
+        } else if (originApiConfig.originApiAuthorizationType === OriginApiAuthorizationType.IAM) {
+          headerBehavior = CacheHeaderBehavior.allowList(...[
+            'Authorization',
+            'Host',
+          ]);
+          queryStringBehavior = CacheQueryStringBehavior.all();
+        } else {
+          headerBehavior = CacheHeaderBehavior.none();
+          queryStringBehavior = CacheQueryStringBehavior.none();
+        }
+        defaultCachePolicy = new CachePolicy(this, `DefaultCachePolicy-${originApiConfig.path}`, {
+          minTtl: Duration.seconds(0),
+          maxTtl: Duration.seconds(1),
+          defaultTtl: Duration.seconds(0),
+          headerBehavior: headerBehavior,
+          queryStringBehavior: queryStringBehavior,
+          cookieBehavior: CacheCookieBehavior.none(),
+          enableAcceptEncodingGzip: true,
+          enableAcceptEncodingBrotli: true,
+        });
+      }
+      distribution.addBehavior(`${props.stageName}/${originApiConfig.path}*`, httpOrigin, {
+        allowedMethods: originApiConfig.allowedMethods ?? AllowedMethods.ALLOW_ALL,
+        cachedMethods: originApiConfig.cachedMethods ?? CachedMethods.CACHE_GET_HEAD,
+        cachePolicy: originApiConfig.cachePolicy ?? defaultCachePolicy,
+        compress: originApiConfig.compress ?? true,
+        originRequestPolicy: originApiConfig.originRequestPolicy,
+        responseHeadersPolicy: originApiConfig.responseHeadersPolicy,
+        viewerProtocolPolicy: originApiConfig.viewerProtocolPolicy ?? ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       });
     }
     return distribution;

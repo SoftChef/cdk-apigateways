@@ -1,6 +1,15 @@
 import {
   ICertificate,
 } from 'aws-cdk-lib/aws-certificatemanager';
+import {
+  ErrorResponse,
+  GeoRestriction,
+  HttpVersion,
+  SecurityPolicyProtocol,
+} from 'aws-cdk-lib/aws-cloudfront';
+import {
+  IBucket,
+} from 'aws-cdk-lib/aws-s3';
 
 export interface DistributionProps {
   /**
@@ -54,4 +63,71 @@ export interface DistributionProps {
     * @default - false, unless `logBucket` is specified.
     */
   readonly enableLogging?: boolean;
+  /**
+   * Controls the countries in which your content is distributed.
+   *
+   * @default - No geographic restrictions
+   * @stability stable
+   */
+  readonly geoRestriction?: GeoRestriction;
+  /**
+  * Specify the maximum HTTP version that you want viewers to use to communicate with CloudFront.
+  *
+  * For viewers and CloudFront to use HTTP/2, viewers must support TLS 1.2 or later, and must support server name identification (SNI).
+  *
+  * @default HttpVersion.HTTP2
+  * @stability stable
+  */
+  readonly httpVersion?: HttpVersion;
+  /**
+   * The Amazon S3 bucket to store the access logs in.
+   *
+   * @default - A bucket is created if `enableLogging` is true
+   * @stability stable
+   */
+  readonly logBucket?: IBucket;
+  /**
+  * Specifies whether you want CloudFront to include cookies in access logs.
+  *
+  * @default false
+  * @stability stable
+  */
+  readonly logIncludesCookies?: boolean;
+  /**
+  * An optional string that you want CloudFront to prefix to the access log filenames for this distribution.
+  *
+  * @default - no prefix
+  * @stability stable
+  */
+  readonly logFilePrefix?: string;
+  /**
+   * Unique identifier that specifies the AWS WAF web ACL to associate with this CloudFront distribution.
+   *
+   * To specify a web ACL created using the latest version of AWS WAF, use the ACL ARN, for example
+   * `arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a`.
+   * To specify a web ACL created using AWS WAF Classic, use the ACL ID, for example `473e64fd-f30b-4765-81a0-62ad96dd167a`.
+   *
+   * @default - No AWS Web Application Firewall web access control list (web ACL).
+   * @see https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CreateDistribution.html#API_CreateDistribution_RequestParameters.
+   * @stability stable
+   */
+  readonly webAclId?: string;
+  /**
+  * How CloudFront should handle requests that are not successful (e.g., PageNotFound).
+  *
+  * @default - No custom error responses.
+  * @stability stable
+  */
+  readonly errorResponses?: ErrorResponse[];
+  /**
+  * The minimum version of the SSL protocol that you want CloudFront to use for HTTPS connections.
+  *
+  * CloudFront serves your objects only to browsers or devices that support at
+  * least the SSL version that you specify.
+  *
+  * @default - SecurityPolicyProtocol.TLS_V1_2_2021 if the '
+  * @stability stable
+  * @aws-cdk /aws-cloudfront:defaultSecurityPolicyTLSv1.2_2021' feature flag is set; otherwise, SecurityPolicyProtocol.TLS_V1_2_2019.
+  */
+  readonly minimumProtocolVersion?: SecurityPolicyProtocol;
 }
